@@ -1,0 +1,101 @@
+/* --- Animated Background --- */
+.background-animation {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    overflow: hidden;
+}
+
+.shape {
+    position: absolute;
+    list-style: none;
+    display: block;
+    width: 40px;
+    height: 40px;
+    background-color: rgba(0, 123, 255, 0.15);
+    bottom: -150px;
+    animation: float 25s linear infinite;
+    border-radius: 50%;
+}
+
+.shape:nth-child(1) { left: 10%; width: 80px; height: 80px; animation-delay: 0s; }
+.shape:nth-child(2) { left: 20%; width: 30px; height: 30px; animation-delay: 2s; animation-duration: 12s; }
+.shape:nth-child(3) { left: 35%; width: 100px; height: 100px; animation-delay: 4s; }
+.shape:nth-child(4) { left: 50%; width: 60px; height: 60px; animation-delay: 0s; animation-duration: 18s; }
+.shape:nth-child(5) { left: 65%; width: 20px; height: 20px; animation-delay: 0s; }
+.shape:nth-child(6) { left: 85%; width: 120px; height: 120px; animation-delay: 3s; }
+
+@keyframes float {
+    0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-1000px) rotate(720deg);
+        opacity: 0;
+    }
+}
+
+/* --- Page/Card Animations --- */
+.slide-in-fade {
+    animation: slideInFade 0.6s ease-out forwards;
+}
+
+@keyframes slideInFade {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.anim-card, .anim-row {
+    opacity: 0;
+    animation: fadeIn 0.5s ease-out forwards;
+}
+
+/* Stagger card animations */
+.anim-card:nth-child(1) { animation-delay: 0.1s; }
+.anim-card:nth-child(2) { animation-delay: 0.2s; }
+.anim-card:nth-child(3) { animation-delay: 0.3s; }
+
+/* Stagger table row animations */
+.anim-row:nth-child(odd) { animation-delay: 0.1s; }
+.anim-row:nth-child(even) { animation-delay: 0.2s; }
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* --- Count-up Animation --- */
+.count-number {
+    animation: countUp 1s ease-out;
+}
+
+@keyframes countUp {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* --- Spinner Animation --- */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}

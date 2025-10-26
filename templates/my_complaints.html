@@ -1,0 +1,167 @@
+{% extends "layout.html" %}
+{% block title %}My Complaints{% endblock %}
+{% block content %}
+<nav class="navbar">
+    <div class="nav-container">
+        <a class="nav-brand" href="{{ url_for('student_dashboard') }}">Student Portal</a>
+        <ul class="nav-links">
+            <li><a href="{{ url_for('add_complaint') }}">➕ Add Complaint</a></li>
+            <li><a href="{{ url_for('student_profile') }}">👤 Profile</a></li>
+            <li><a href="{{ url_for('logout') }}">🚪 Logout</a></li>
+        </ul>
+    </div>
+</nav>
+
+<div class="container">
+    <h2 class="page-title">📋 My Submitted Complaints</h2>
+
+    {% if complaints %}
+    <div class="complaint-list">
+        {% for complaint in complaints %}
+        <div class="complaint-card">
+            <div class="complaint-header">
+                <h3 class="complaint-title">{{ complaint.title }}</h3>
+                <span class="badge badge-{{ complaint.status | lower | replace(' ', '-') }}">{{ complaint.status }}</span>
+            </div>
+
+            <div class="complaint-info">
+                <p><strong>Category:</strong> {{ complaint.category }}</p>
+                <p><strong>Submitted on:</strong> {{ complaint.created_at.split(' ')[0] }}</p>
+            </div>
+
+            <p class="complaint-description">{{ complaint.description }}</p>
+
+            {% if complaint.proof_file %}
+            <div class="complaint-proof">
+                <p><strong>Proof:</strong></p>
+                {% set ext = complaint.proof_file.split('.')[-1].lower() %}
+                {% if ext in ['png', 'jpg', 'jpeg', 'gif'] %}
+                    <a href="{{ url_for('uploaded_file', filename=complaint.proof_file) }}" target="_blank" class="view-proof-btn">🖼️ View Image</a>
+                {% elif ext in ['mp4', 'mov'] %}
+                    <a href="{{ url_for('uploaded_file', filename=complaint.proof_file) }}" target="_blank" class="view-proof-btn">🎥 View Video</a>
+                {% elif ext in ['mp3', 'wav', 'm4a', 'aac'] %}
+                    <a href="{{ url_for('uploaded_file', filename=complaint.proof_file) }}" target="_blank" class="view-proof-btn">🎧 Listen Proof</a>
+                {% else %}
+                    <a href="{{ url_for('uploaded_file', filename=complaint.proof_file) }}" target="_blank" class="view-proof-btn">📁 View Proof</a>
+                {% endif %}
+            </div>
+            {% endif %}
+
+            {% if complaint.remark %}
+            <div class="warden-remark">
+                <strong>Warden's Remark:</strong>
+                <div class="remark-box">
+                    {{ complaint.remark }}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="no-complaints">You haven’t submitted any complaints yet.</p>
+    {% endif %}
+</div>
+
+<style>
+    .page-title {
+        text-align: center;
+        font-weight: 700;
+        margin-bottom: 25px;
+        color: #222;
+    }
+
+    .complaint-list {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .complaint-card {
+        background: #fff;
+        padding: 20px;
+        border-radius: 16px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        transition: 0.3s ease;
+    }
+
+    .complaint-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 14px rgba(0,0,0,0.1);
+    }
+
+    .complaint-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .complaint-title {
+        font-size: 1.3em;
+        font-weight: 600;
+    }
+
+    .complaint-info p {
+        margin: 3px 0;
+        color: #555;
+    }
+
+    .complaint-description {
+        margin: 10px 0;
+        color: #333;
+        line-height: 1.5;
+    }
+
+    .badge {
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 0.85em;
+        color: #fff;
+        font-weight: 600;
+        text-transform: capitalize;
+    }
+
+    .badge-pending { background-color: #f4b400; }
+    .badge-in-progress { background-color: #4285f4; }
+    .badge-resolved { background-color: #34a853; }
+
+    .view-proof-btn {
+        display: inline-block;
+        background: #2563eb;
+        color: #fff;
+        padding: 8px 14px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-size: 0.9em;
+        transition: background 0.2s;
+    }
+
+    .view-proof-btn:hover {
+        background: #1e40af;
+    }
+
+    .warden-remark {
+        margin-top: 15px;
+        background: #f9fafb;
+        border-left: 4px solid #2563eb;
+        padding: 10px 12px;
+        border-radius: 6px;
+    }
+
+    .remark-box {
+        margin-top: 6px;
+        background: #fff;
+        padding: 8px 12px;
+        border-radius: 6px;
+        color: #333;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    }
+
+    .no-complaints {
+        text-align: center;
+        color: #666;
+        margin-top: 40px;
+    }
+</style>
+{% endblock %}
