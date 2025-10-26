@@ -1,0 +1,137 @@
+{% extends "layout.html" %}
+{% block title %}Analytics{% endblock %}
+{% block content %}
+<nav class="navbar">
+    <div class="nav-container">
+        <a class="nav-brand" href="{{ url_for('warden_dashboard') }}">Warden Dashboard</a>
+        <ul class="nav-links">
+            <li><a href="{{ url_for('warden_dashboard') }}">📋 All Complaints</a></li>
+            <li><a href="{{ url_for('warden_profile') }}">👤 Profile</a></li>
+            <li><a href="{{ url_for('logout') }}">🚪 Logout</a></li>
+        </ul>
+    </div>
+</nav>
+
+<div class="analytics-container">
+    <h2 class="page-title">📈 Complaint Analytics</h2>
+
+    <!-- Summary Cards -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <h3>Total Complaints</h3>
+            <p class="stat-value">{{ total_complaints }}</p>
+        </div>
+        <div class="stat-card pending">
+            <h3>Pending</h3>
+            <p class="stat-value">{{ status_counts.Pending }}</p>
+        </div>
+        <div class="stat-card resolved">
+            <h3>Resolved</h3>
+            <p class="stat-value">{{ status_counts.Resolved }}</p>
+        </div>
+    </div>
+
+    <!-- Chart Section -->
+    <div class="chart-section">
+        <h3>Complaints by Category</h3>
+        <canvas id="categoryChart"></canvas>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const categories = {{ categories | tojson }};
+    const categoryCounts = {{ category_counts | tojson }};
+
+    const ctx = document.getElementById('categoryChart');
+    if (ctx) {
+        new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: categories,
+                datasets: [{
+                    label: 'Complaints',
+                    data: categoryCounts,
+                    backgroundColor: [
+                        '#FF6384', '#36A2EB', '#FFCE56',
+                        '#4BC0C0', '#9966FF', '#FF9F40', '#C9CBCF'
+                    ],
+                    borderWidth: 2,
+                    borderColor: '#fff',
+                    hoverOffset: 10
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { color: '#333', font: { size: 14 } }
+                    }
+                }
+            }
+        });
+    }
+});
+</script>
+
+<style>
+.analytics-container {
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 0 20px;
+    text-align: center;
+}
+
+.page-title {
+    margin-bottom: 30px;
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: #222;
+}
+
+.stats-grid {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 25px;
+    margin-bottom: 40px;
+}
+
+.stat-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    padding: 25px 40px;
+    flex: 1 1 250px;
+    min-width: 220px;
+    transition: transform 0.2s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-top: 10px;
+    color: #333;
+}
+
+.stat-card.pending .stat-value { color: #f1c40f; }
+.stat-card.resolved .stat-value { color: #27ae60; }
+
+.chart-section {
+    background: white;
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+
+#categoryChart {
+    max-width: 500px;
+    margin: 20px auto 0;
+}
+</style>
+{% endblock %}
