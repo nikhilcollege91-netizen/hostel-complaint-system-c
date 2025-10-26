@@ -11,9 +11,8 @@
 #define DEFAULT_PORT 10000
 #define UPLOAD_DIR "./uploads/"
 #define DB_FILE "./hostel.db"
-#define MAX_UPLOAD_SIZE (16*1024*1024) // 16 MB
+#define MAX_UPLOAD_SIZE (16*1024*1024)
 
-// -------------------- Session Structure --------------------
 struct session {
     int user_id;
     int is_warden;
@@ -98,7 +97,6 @@ int init_db() {
     sqlite3_exec(db,users_sql,0,0,&err);
     sqlite3_exec(db,complaints_sql,0,0,&err);
 
-    // Default Warden
     sqlite3_exec(db,
         "INSERT OR IGNORE INTO users(name,email,password,is_warden) "
         "VALUES('Warden','hostelwarden.cu@gmail.com','CUWARDEN',1);",0,0,&err);
@@ -107,7 +105,7 @@ int init_db() {
     return 1;
 }
 
-// -------------------- HTTP Handlers --------------------
+// -------------------- Serve Files --------------------
 int serve_file(struct MHD_Connection *conn,const char *filepath) {
     char *data = read_file(filepath);
     if(!data) return send_text(conn,"File not found",404);
@@ -162,6 +160,36 @@ int handle_student_login(struct MHD_Connection *conn,const char *post_data) {
     return send_text(conn,"Invalid email or password",401);
 }
 
+int handle_warden_login(struct MHD_Connection *conn,const char *post_data) {
+    char email[128],password[128],hash[65];
+    sscanf(post_data,"email=%127[^&]&password=%127s",email,password);
+    sha256(password,hash);
+
+    sqlite3 *db; sqlite3_open(DB_FILE,&db);
+    sqlite3_stmt *stmt;
+    sqlite3_prepare_v2(db,"SELECT id,name,password FROM users WHERE email=? AND is_warden=1;",-1,&stmt,0);
+    sqlite3_bind_text(stmt,1,email,-1,SQLITE_STATIC);
+
+    int rc = sqlite3_step(stmt);
+    if(rc==SQLITE_ROW){
+        const char *db_pass = (const char*)sqlite3_column_text(stmt,2);
+        if(strcmp(db_pass,hash)==0){
+            int uid = sqlite3_column_int(stmt,0);
+            const char *uname = (const char*)sqlite3_column_text(stmt,1);
+            struct session *s = create_session(uid,1,uname);
+            sqlite3_finalize(stmt); sqlite3_close(db);
+
+            struct MHD_Response *resp = MHD_create_response_from_buffer(strlen("Login Successful"),"Login Successful",MHD_RESPMEM_PERSISTENT);
+            MHD_add_response_header(resp,"Set-Cookie",s->cookie);
+            int ret = MHD_queue_response(conn,MHD_HTTP_OK,resp);
+            MHD_destroy_response(resp);
+            return ret;
+        }
+    }
+    sqlite3_finalize(stmt); sqlite3_close(db);
+    return send_text(conn,"Invalid email or password",401);
+}
+
 // -------------------- Main HTTP Handler --------------------
 int handle_connection(void *cls, struct MHD_Connection *conn,const char *url,const char *method,
     const char *ver,const char *upload_data, size_t *upload_data_size, void **con_cls) {
@@ -178,6 +206,7 @@ int handle_connection(void *cls, struct MHD_Connection *conn,const char *url,con
         const char *post_data = MHD_lookup_connection_value(conn,MHD_POSTDATA_KIND,NULL);
         if(strcmp(url,"/student/register")==0) return handle_student_register(conn,post_data);
         else if(strcmp(url,"/student/login")==0) return handle_student_login(conn,post_data);
+        else if(strcmp(url,"/warden/login")==0) return handle_warden_login(conn,post_data);
         else return send_text(conn,"POST route not implemented",501);
     }
 
