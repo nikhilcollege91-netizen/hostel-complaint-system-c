@@ -1,0 +1,150 @@
+{% extends "layout.html" %}
+{% block title %}Student Dashboard{% endblock %}
+{% block content %}
+
+<nav class="navbar">
+    <div class="nav-container">
+        <a class="nav-brand" href="{{ url_for('student_dashboard') }}">🎓 Student Dashboard</a>
+        <ul class="nav-links">
+            <li><a href="{{ url_for('student_profile') }}">👤 Profile</a></li>
+            <li><a href="{{ url_for('logout') }}">🚪 Logout</a></li>
+        </ul>
+    </div>
+</nav>
+
+<div class="student-dashboard">
+    <h1 class="welcome">👋 Welcome, <span>{{ name }}</span></h1>
+    <p class="subtitle">Manage your complaints and profile easily</p>
+
+    <div class="dashboard-grid">
+        <a href="{{ url_for('add_complaint') }}" class="dash-card">
+            <div class="icon">➕</div>
+            <h3>Add Complaint</h3>
+            <p>Submit a new complaint about any issue.</p>
+        </a>
+
+        <a href="{{ url_for('my_complaints') }}" class="dash-card">
+            <div class="icon">📋</div>
+            <h3>My Complaints</h3>
+            <p>View and track all your submitted complaints.</p>
+        </a>
+
+        <a href="{{ url_for('student_profile') }}" class="dash-card">
+            <div class="icon">👤</div>
+            <h3>My Profile</h3>
+            <p>Update your personal information and password.</p>
+        </a>
+    </div>
+</div>
+
+<style>
+    .student-dashboard {
+        max-width: 1000px;
+        margin: 60px auto;
+        text-align: center;
+        font-family: "Poppins", sans-serif;
+        padding: 0 20px;
+    }
+
+    .welcome {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #1a1a1a;
+    }
+
+    .welcome span {
+        color: #007bff;
+    }
+
+    .subtitle {
+        color: #666;
+        margin-top: 6px;
+        margin-bottom: 35px;
+    }
+
+    .dashboard-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .dash-card {
+        background: #fff;
+        border-radius: 14px;
+        padding: 25px 20px;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+        text-decoration: none;
+        color: #222;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .dash-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 12px 25px rgba(0,0,0,0.1);
+    }
+
+    .dash-card .icon {
+        font-size: 2rem;
+        margin-bottom: 10px;
+        color: #007bff;
+    }
+
+    .dash-card h3 {
+        margin-bottom: 6px;
+        font-size: 1.2rem;
+        font-weight: 600;
+    }
+
+    .dash-card p {
+        font-size: 0.95rem;
+        color: #666;
+    }
+
+    body {
+        background: linear-gradient(180deg, #f4f7fb, #e6f0ff);
+        min-height: 100vh;
+    }
+
+    .navbar {
+        background: white;
+        padding: 12px 20px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .nav-brand {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #007bff;
+        text-decoration: none;
+    }
+
+    .nav-links {
+        list-style: none;
+        display: flex;
+        gap: 1.5rem;
+    }
+
+    .nav-links a {
+        text-decoration: none;
+        color: #333;
+        font-weight: 500;
+        transition: color 0.2s;
+    }
+
+    .nav-links a:hover {
+        color: #007bff;
+    }
+
+    @media (max-width: 600px) {
+        .welcome {
+            font-size: 1.6rem;
+        }
+        .dash-card {
+            padding: 20px 15px;
+        }
+    }
+</style>
+
+{% endblock %}
