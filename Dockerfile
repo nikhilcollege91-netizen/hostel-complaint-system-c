@@ -1,14 +1,23 @@
+# Use Alpine for a lightweight C environment
 FROM alpine:3.18
 
-RUN apk add --no-cache build-base libmicrohttpd-dev sqlite-dev
+# Install dependencies: build tools, SQLite, microhttpd, OpenSSL
+RUN apk add --no-cache build-base sqlite-dev libmicrohttpd-dev openssl-dev
 
+# Set working directory
 WORKDIR /app
-COPY . /app
 
-# Compile the C server
-RUN gcc server.c -o server -lmicrohttpd -lsqlite3
+# Copy source files
+COPY . .
 
-RUN mkdir -p /app/uploads && chmod 755 /app/uploads
+# Create uploads directory
+RUN mkdir -p uploads
 
+# Compile the server
+RUN gcc server.c -o server -lmicrohttpd -lsqlite3 -lssl -lcrypto
+
+# Expose the port (Render sets PORT env)
 EXPOSE 10000
-CMD ["./server"]
+
+# Run the server using the PORT environment variable
+CMD ["sh", "-c", "./server"]
