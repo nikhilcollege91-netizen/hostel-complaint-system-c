@@ -1,0 +1,42 @@
+{% extends "layout.html" %}
+{% block title %}{{ title }}{% endblock %}
+{% block content %}
+<nav class="navbar">
+    <div class="nav-container">
+        {% if session.is_warden %}
+            <a class="nav-brand" href="{{ url_for('warden_dashboard') }}">Warden Portal</a>
+            <ul class="nav-links">
+                <li><a href="{{ url_for('warden_analytics') }}">📈 Analytics</a></li>
+                <li><a href="{{ url_for('logout') }}">🚪 Logout</a></li>
+            </ul>
+        {% else %}
+             <a class="nav-brand" href="{{ url_for('student_dashboard') }}">Student Portal</a>
+            <ul class="nav-links">
+                <li><a href="{{ url_for('my_complaints') }}">📋 My Complaints</a></li>
+                <li><a href="{{ url_for('logout') }}">🚪 Logout</a></li>
+            </ul>
+        {% endif %}
+    </div>
+</nav>
+
+<div class="container">
+    <div class="card form-card" style="max-width: 500px; margin: 2rem auto;">
+        <h2>👤 {{ title }}</h2>
+        <form method="POST">
+            <div class="form-group">
+                <label for="name">Name</label>
+                <input type="text" id="name" name="name" value="{{ user.name }}" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" value="{{ user.email }}" required>
+            </div>
+            <div class="form-group">
+                <label for="password">New Password (optional)</label>
+                <input type="password" id="password" name="password" placeholder="Leave blank to keep current password">
+            </div>
+            <button type="submit" class="btn btn-primary btn-glow">Update Profile</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

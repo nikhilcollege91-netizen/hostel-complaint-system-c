@@ -1,0 +1,118 @@
+{% extends "layout.html" %}
+{% block title %}Welcome - Hostel Complaint System{% endblock %}
+{% block content %}
+<style>
+/* Background & layout */
+.auth-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 90vh;
+    background: linear-gradient(135deg, #f3f8ff, #e8f0ff);
+    animation: fadeIn 1s ease-in-out;
+}
+
+/* Card */
+.auth-card {
+    background: white;
+    padding: 50px 60px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    max-width: 420px;
+    width: 100%;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.auth-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+}
+
+/* Titles */
+.main-title {
+    color: #007bff;
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+    letter-spacing: 1px;
+}
+#tagline {
+    color: #555;
+    font-size: 1rem;
+    margin-bottom: 30px;
+    font-weight: 500;
+    min-height: 24px;
+}
+
+/* Buttons */
+.button-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+.btn {
+    display: inline-block;
+    font-size: 1.05rem;
+    padding: 14px;
+    border-radius: 10px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+.btn-primary {
+    background: linear-gradient(135deg, #007bff, #0056d6);
+    color: white;
+}
+.btn-secondary {
+    background: linear-gradient(135deg, #444, #222);
+    color: white;
+}
+.btn-glow:hover {
+    box-shadow: 0 0 20px rgba(0, 123, 255, 0.5);
+    transform: translateY(-2px);
+}
+
+/* Animation */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    .auth-card {
+        padding: 35px 25px;
+    }
+    .main-title {
+        font-size: 1.6rem;
+    }
+}
+</style>
+
+<div class="auth-container">
+    <div class="auth-card">
+        <h1 class="main-title">Hostel Complaint System 🏫</h1>
+        <h2 id="tagline"></h2>
+        <div class="button-container">
+            <a href="{{ url_for('student_login') }}" class="btn btn-primary btn-glow">👨‍🎓 Student Portal</a>
+            <a href="{{ url_for('warden_login') }}" class="btn btn-secondary btn-glow">🧑‍💼 Warden Portal</a>
+        </div>
+    </div>
+</div>
+
+<script>
+const taglineText = ["Register • Track • Resolve", "Your voice matters 🗣️", "Quick • Transparent • Reliable"];
+let idx = 0;
+function changeTagline() {
+    const tagline = document.getElementById("tagline");
+    tagline.style.opacity = 0;
+    setTimeout(() => {
+        tagline.textContent = taglineText[idx];
+        tagline.style.opacity = 1;
+        idx = (idx + 1) % taglineText.length;
+    }, 400);
+}
+setInterval(changeTagline, 2500);
+changeTagline();
+</script>
+{% endblock %}
